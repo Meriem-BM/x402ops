@@ -23,8 +23,67 @@ import {
 } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
-export function AgentHeader() {
-  const [open, setOpen] = useState(false)
+export function AgentHeader({
+  orgAddress,
+  onCreated,
+}: {
+  orgAddress?: string;
+  onCreated?: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [type, setType] = useState<"agent" | "service" | "app">("agent");
+  const [network, setNetwork] = useState("base");
+  const [preset, setPreset] = useState<"low" | "standard" | "high">("standard");
+  const [loading, setLoading] = useState(false);
+
+  const presetToLimit = (p: string) => {
+    switch (p) {
+      case "low":
+        return 1;
+      case "high":
+        return 20;
+      default:
+        return 5;
+    }
+  };
+
+  async function handleCreate() {
+    if (!name.trim()) return;
+    setLoading(true);
+    try {
+      const body = {
+        orgAddress: orgAddress ?? "0xdev",
+        name: name.trim(),
+        type,
+        network,
+        dailyLimit: presetToLimit(preset),
+        allowedVendors: [],
+      };
+
+      const res = await fetch("/api/clients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (res.ok) {
+        setOpen(false);
+        setName("");
+        setType("agent");
+        setNetwork("base");
+        setPreset("standard");
+        onCreated?.();
+      } else {
+        // could show error toast
+        console.error("Create failed", await res.text());
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -51,11 +110,11 @@ export function AgentHeader() {
           <div className="space-y-6 py-4">
             <div className="space-y-2">
               <Label htmlFor="name">Agent Name</Label>
-              <Input id="name" placeholder="e.g. Research Assistant" />
+              <Input id="name" value={name} onChange={(e) => setName((e.target as HTMLInputElement).value)} placeholder="e.g. Research Assistant" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="type">Type</Label>
-              <Select defaultValue="agent">
+              <Select value={type} onValueChange={(v: string) => setType(v as "agent" | "service" | "app") }>
                 <SelectTrigger id="type">
                   <SelectValue />
                 </SelectTrigger>
@@ -68,7 +127,7 @@ export function AgentHeader() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="network">Network</Label>
-              <Select defaultValue="base">
+              <Select value={network} onValueChange={(v) => setNetwork(v)}>
                 <SelectTrigger id="network">
                   <SelectValue />
                 </SelectTrigger>
@@ -81,32 +140,26 @@ export function AgentHeader() {
             </div>
             <div className="space-y-3">
               <Label>Policy Preset</Label>
-              <RadioGroup defaultValue="standard" className="space-y-3">
+              <RadioGroup value={preset} onValueChange={(v: string) => setPreset(v as "low" | "standard" | "high") } className="space-y-3">
                 <div className="flex items-center space-x-3 space-y-0">
                   <RadioGroupItem value="low" id="low" />
                   <Label htmlFor="low" className="font-normal cursor-pointer">
                     <div className="font-medium">Low Spend</div>
-                    <div className="text-sm text-muted-foreground">
-                      1 USDC per day
-                    </div>
+                    <div className="text-sm text-muted-foreground">1 USDC per day</div>
                   </Label>
                 </div>
                 <div className="flex items-center space-x-3 space-y-0">
                   <RadioGroupItem value="standard" id="standard" />
                   <Label htmlFor="standard" className="font-normal cursor-pointer">
                     <div className="font-medium">Standard</div>
-                    <div className="text-sm text-muted-foreground">
-                      5 USDC per day
-                    </div>
+                    <div className="text-sm text-muted-foreground">5 USDC per day</div>
                   </Label>
                 </div>
                 <div className="flex items-center space-x-3 space-y-0">
                   <RadioGroupItem value="high" id="high" />
                   <Label htmlFor="high" className="font-normal cursor-pointer">
                     <div className="font-medium">High Spend</div>
-                    <div className="text-sm text-muted-foreground">
-                      20 USDC per day
-                    </div>
+                    <div className="text-sm text-muted-foreground">20 USDC per day</div>
                   </Label>
                 </div>
               </RadioGroup>
@@ -116,11 +169,13 @@ export function AgentHeader() {
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={() => setOpen(false)}>Create Agent Wallet</Button>
+            <Button onClick={handleCreate} disabled={loading}>
+              {loading ? "Creating..." : "Create Agent Wallet"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
 
