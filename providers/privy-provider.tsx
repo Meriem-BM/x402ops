@@ -30,6 +30,7 @@ export default function PrivyProvider({
           },
         },
         defaultChain: base,
+        supportedChains: [base],
       }}
     >
       {children}
