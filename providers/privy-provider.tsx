@@ -1,12 +1,7 @@
-"use client";
-
 import { PrivyProvider as ReactPrivyProvider } from "@privy-io/react-auth";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createConfig } from "@privy-io/wagmi";
 import { base } from "viem/chains";
 import { http } from "wagmi";
-
-const queryClient = new QueryClient();
 
 export const config = createConfig({
   chains: [base],
@@ -37,7 +32,7 @@ export default function PrivyProvider({
         defaultChain: base,
       }}
     >
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      {children}
     </ReactPrivyProvider>
   );
 }
