@@ -1,5 +1,8 @@
+"use client"
+
 import Link from "next/link"
-import { Copy, Pause, Play } from "lucide-react"
+import { Copy, Pause, Play, Trash } from "lucide-react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
@@ -16,9 +19,11 @@ interface Agent {
 
 interface AgentTableProps {
   agents: Agent[]
+  onAction?: () => void
 }
 
-export function AgentTable({ agents }: AgentTableProps) {
+export function AgentTable({ agents, onAction }: AgentTableProps) {
+  const [loadingId, setLoadingId] = useState<string | null>(null)
   return (
     <Card>
       <div className="relative overflow-x-auto">
@@ -131,14 +136,61 @@ export function AgentTable({ agents }: AgentTableProps) {
                         View
                       </Button>
                     </Link>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      {agent.status === "Paused" ? (
-                        <Play className="h-4 w-4" />
-                      ) : (
-                        <Pause className="h-4 w-4" />
-                      )}
-                      <span className="sr-only">Toggle</span>
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={async () => {
+                          try {
+                            setLoadingId(agent.id)
+                            const newStatus = agent.status === "Paused" ? "OK" : "Paused"
+                            const res = await fetch(`/api/clients?id=${agent.id}`, {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ status: newStatus }),
+                            })
+                            if (res.ok) onAction?.()
+                          } catch (err) {
+                            console.error(err)
+                          } finally {
+                            setLoadingId(null)
+                          }
+                        }}
+                        disabled={loadingId === agent.id}
+                      >
+                        {agent.status === "Paused" ? (
+                          <Play className="h-4 w-4" />
+                        ) : (
+                          <Pause className="h-4 w-4" />
+                        )}
+                        <span className="sr-only">Toggle</span>
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={async () => {
+                          if (!confirm(`Delete agent ${agent.name}?`)) return
+                          try {
+                            setLoadingId(agent.id)
+                            const res = await fetch(`/api/clients?id=${agent.id}`, {
+                              method: "DELETE",
+                            })
+                            if (res.ok) onAction?.()
+                          } catch (err) {
+                            console.error(err)
+                          } finally {
+                            setLoadingId(null)
+                          }
+                        }}
+                        disabled={loadingId === agent.id}
+                      >
+                        <Trash className="h-4 w-4 text-destructive" />
+                        <span className="sr-only">Delete</span>
+                      </Button>
+                    </div>
                   </div>
                 </td>
               </tr>
