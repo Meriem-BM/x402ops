@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { ClientStatusEnum, IClient } from "@/types/client";
-import { useDeleteAgent, useUpdateAgent } from "@/hooks/useAgent";
+import { useUpdateAgent } from "@/hooks/useAgent";
+import { useModal } from "@/contexts/modal-context";
 
 interface AgentTableProps {
   agents: IClient[] | [];
@@ -17,7 +18,7 @@ interface AgentTableProps {
 export function AgentTable({ agents, onAction }: AgentTableProps) {
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const updateAgent = useUpdateAgent();
-  const deleteAgent = useDeleteAgent();
+  const { openModal } = useModal();
 
   return (
     <Card>
@@ -168,19 +169,13 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={async () => {
-                          if (!confirm(`Delete agent ${agent.name}?`)) return;
-                          try {
-                            setLoadingId(agent.id);
-                            await deleteAgent.mutateAsync(agent.id);
-                            if (onAction) onAction();
-                          } catch (err) {
-                            console.error(err);
-                          } finally {
-                            setLoadingId(null);
-                          }
+                        onClick={() => {
+                          openModal("DELETE_AGENT", {
+                            agentId: agent.id,
+                            agentName: agent.name,
+                            onDeleted: onAction,
+                          });
                         }}
-                        disabled={loadingId === agent.id}
                       >
                         <Trash className="h-4 w-4 text-destructive" />
                         <span className="sr-only">Delete</span>

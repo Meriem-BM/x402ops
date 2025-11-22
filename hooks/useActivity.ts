@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ActivityEvent } from "@/types/activity";
+import { IActivity } from "@/types/activity";
 
 // Keys for React Query
 export const activityKeys = {
@@ -13,7 +13,7 @@ export const activityKeys = {
  * @param orgAddress - The organization address to fetch activities for.
  * @returns The activities for the given organization address.
  */
-async function fetchActivities(orgAddress?: string): Promise<ActivityEvent[]> {
+async function fetchActivities(orgAddress?: string): Promise<IActivity[]> {
   const searchParams = new URLSearchParams();
   if (orgAddress) {
     searchParams.set("orgAddress", orgAddress);

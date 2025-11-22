@@ -1,3 +1,6 @@
+import { activityEvents } from "@/lib/db/schema";
+import { InferSelectModel } from "drizzle-orm";
+
 export type ActivityStatus = "SUCCESS" | "BLOCKED" | "FAILED";
 
 export enum ActivityStatusEnum {
@@ -6,16 +9,4 @@ export enum ActivityStatusEnum {
   FAILED = "FAILED",
 }
 
-export interface ActivityEvent {
-  id: string;
-  clientId: string;
-  orgAddress: string;
-  walletAddress?: string;
-  vendor?: string;
-  amount: number;
-  assetSymbol: string; // "USDC"
-  status: ActivityStatusEnum;
-  reason?: string; // "over_limit" | "non_allowlisted" | "paused" | "cdp_error"
-  txHash?: string;
-  createdAt: number;
-}
+export type IActivity = InferSelectModel<typeof activityEvents>;

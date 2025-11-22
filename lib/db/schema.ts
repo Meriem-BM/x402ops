@@ -7,12 +7,14 @@ import {
   date,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
+import { ClientStatus, ClientType } from "@/types/client";
+import { ActivityStatus } from "@/types/activity";
 
 export const clients = pgTable("clients", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
   orgAddress: varchar("org_address", { length: 80 }).notNull(),
   name: varchar("name", { length: 120 }).notNull(),
-  type: varchar("type", { length: 20 }).notNull(), // "agent" | "service" | "app"
+  type: varchar("type", { length: 20 }).notNull().$type<ClientType>(), // "agent" | "service" | "app"
   network: varchar("network", { length: 80 }).notNull(),
 
   dailyLimit: numeric("daily_limit", { precision: 18, scale: 6 }).notNull(),
@@ -23,7 +25,7 @@ export const clients = pgTable("clients", {
 
   allowedVendors: text("allowed_vendors").notNull().default("[]"), // store as JSON string
 
-  status: varchar("status", { length: 20 }).notNull().default("OK"),
+  status: varchar("status", { length: 20 }).notNull().$type<ClientStatus>().default("OK"),
 
   cdpWalletId: text("cdp_wallet_id"),
   cdpWalletAddress: varchar("cdp_wallet_address", { length: 80 }),
@@ -46,7 +48,7 @@ export const activityEvents = pgTable("activity_events", {
   vendor: varchar("vendor", { length: 80 }),
   amount: numeric("amount", { precision: 18, scale: 6 }).notNull(),
   assetSymbol: varchar("asset_symbol", { length: 16 }).notNull(), // e.g. "USDC"
-  status: varchar("status", { length: 20 }).notNull(), // "SUCCESS" | "BLOCKED" | "FAILED"
+  status: varchar("status", { length: 20 }).notNull().$type<ActivityStatus>(), // "SUCCESS" | "BLOCKED" | "FAILED"
   reason: text("reason"),
   txHash: varchar("tx_hash", { length: 100 }),
   createdAt: timestamp("created_at")
