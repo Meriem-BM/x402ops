@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { LayoutDashboard, Bot, Activity, Settings, Wallet } from "lucide-react"
-import { cn } from "@/lib/tw-utils"
+import { cn } from "@/utils/tw-utils"
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
