@@ -1,75 +1,22 @@
-"use client"
+"use client";
 
-import { useCallback, useEffect, useState } from "react"
-import { Search } from "lucide-react"
-import { DashboardShell } from "@/components/dashboard-shell"
-import { Input } from "@/components/ui/input"
-import { AgentHeader } from "@/components/agents/agent-header"
-import { AgentTable } from "@/components/agents/agent-table"
-
-interface RawClient {
-  id: string
-  name: string
-  type: string
-  cdpWalletAddress?: string
-  dailyLimit: string | number
-  spentToday: string | number
-  allowedVendors: string[]
-  status: string
-}
-
-interface Agent {
-  id: string
-  name: string
-  type: string
-  address: string
-  limit: number
-  status: string
-  vendors: string[]
-}
+import { Search } from "lucide-react";
+import { DashboardShell } from "@/components/dashboard-shell";
+import { Input } from "@/components/ui/input";
+import { AgentHeader } from "@/components/agents/agent-header";
+import { AgentTable } from "@/components/agents/agent-table";
+import { useFetchAgents } from "@/hooks/useAgent";
+import { useOrg } from "@/contexts/org-context";
 
 export default function AgentsPage() {
-  const [agents, setAgents] = useState<Agent[]>([])
+  const { orgAddress } = useOrg();
+  const { data: clients, refetch } = useFetchAgents(orgAddress);
 
-  const fetchClients = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/clients`)
-      if (!res.ok) return
-      const data = await res.json()
-      const rows: RawClient[] = data.clients ?? []
-      const mapped = rows.map((r) => ({
-        id: r.id,
-        name: r.name,
-        type: r.type.charAt(0).toUpperCase() + r.type.slice(1),
-        address: r.cdpWalletAddress ?? "",
-        limit: Number(r.dailyLimit),
-        status:
-          r.status === "NEAR_LIMIT"
-            ? "Near Limit"
-            : r.status === "OVER_LIMIT"
-            ? "Over"
-            : r.status === "PAUSED"
-            ? "Paused"
-            : "OK",
-        vendors: r.allowedVendors ?? [],
-      }))
-      setAgents(mapped)
-    } catch (err) {
-      console.error(err)
-    }
-  }, [])
-
-  useEffect(() => {
-    const t = setTimeout(() => {
-      void fetchClients()
-    }, 0)
-    return () => clearTimeout(t)
-  }, [fetchClients])
 
   return (
     <DashboardShell>
       <div className="space-y-6">
-        <AgentHeader orgAddress={process.env.NEXT_PUBLIC_ORG_ADDRESS} onCreated={fetchClients} />
+        <AgentHeader onCreated={() => refetch()} />
 
         <div className="flex items-center gap-3">
           <div className="relative flex-1 max-w-sm">
@@ -78,8 +25,8 @@ export default function AgentsPage() {
           </div>
         </div>
 
-        <AgentTable agents={agents} onAction={fetchClients} />
+        <AgentTable agents={clients ?? []} onAction={() => refetch()} />
       </div>
     </DashboardShell>
-  )
+  );
 }

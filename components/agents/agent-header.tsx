@@ -22,20 +22,22 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { useCreateAgent } from "@/hooks/useAgent"
+import { useOrg } from "@/contexts/org-context"
 
 export function AgentHeader({
-  orgAddress,
   onCreated,
 }: {
-  orgAddress?: string;
   onCreated?: () => void;
 }) {
+  const { orgAddress } = useOrg();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [type, setType] = useState<"agent" | "service" | "app">("agent");
   const [network, setNetwork] = useState("base");
   const [preset, setPreset] = useState<"low" | "standard" | "high">("standard");
-  const [loading, setLoading] = useState(false);
+  
+  const { mutateAsync: createAgent, isPending: loading } = useCreateAgent();
 
   const presetToLimit = (p: string) => {
     switch (p) {
@@ -50,38 +52,26 @@ export function AgentHeader({
 
   async function handleCreate() {
     if (!name.trim()) return;
-    setLoading(true);
+    if (!orgAddress) return; // Should maybe show error or disable button
+    
     try {
-      const body = {
-        orgAddress: orgAddress ?? "0xdev",
+      await createAgent({
+        orgAddress,
         name: name.trim(),
         type,
         network,
         dailyLimit: presetToLimit(preset),
         allowedVendors: [],
-      };
-
-      const res = await fetch("/api/clients", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
       });
 
-      if (res.ok) {
-        setOpen(false);
-        setName("");
-        setType("agent");
-        setNetwork("base");
-        setPreset("standard");
-        onCreated?.();
-      } else {
-        // could show error toast
-        console.error("Create failed", await res.text());
-      }
+      setOpen(false);
+      setName("");
+      setType("agent");
+      setNetwork("base");
+      setPreset("standard");
+      onCreated?.();
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
     }
   }
 

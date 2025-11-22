@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Link from "next/link";
 
 function BotIcon({ className }: { className?: string }) {
   return (
@@ -41,7 +42,7 @@ export function AgentsList() {
           </CardDescription>
         </div>
         <Button variant="outline" size="sm" asChild>
-          <a href="/agents">View All</a>
+          <Link href="/agents">View All</Link>
         </Button>
       </CardHeader>
       <CardContent>

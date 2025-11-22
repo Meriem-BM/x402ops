@@ -1,29 +1,24 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { Copy, Pause, Play, Trash } from "lucide-react"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card } from "@/components/ui/card"
-
-interface Agent {
-  id: string
-  name: string
-  type: string
-  address: string
-  limit: number
-  status: string
-  vendors: string[]
-}
+import Link from "next/link";
+import { Copy, Pause, Play, Trash } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { ClientStatusEnum, IClient } from "@/types/client";
+import { useDeleteAgent, useUpdateAgent } from "@/hooks/useAgent";
 
 interface AgentTableProps {
-  agents: Agent[]
-  onAction?: () => void
+  agents: IClient[] | [];
+  onAction?: () => void;
 }
 
 export function AgentTable({ agents, onAction }: AgentTableProps) {
-  const [loadingId, setLoadingId] = useState<string | null>(null)
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const updateAgent = useUpdateAgent();
+  const deleteAgent = useDeleteAgent();
+
   return (
     <Card>
       <div className="relative overflow-x-auto">
@@ -75,7 +70,7 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
                     <code className="text-xs font-mono text-muted-foreground">
-                      {agent.address}
+                      {agent.cdpWalletAddress}
                     </code>
                     <Button
                       variant="ghost"
@@ -89,18 +84,18 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
                 </td>
                 <td className="px-6 py-4">
                   <span className="text-muted-foreground">
-                    {agent.limit} USDC
+                    {agent.dailyLimit} USDC
                   </span>
                 </td>
                 <td className="px-6 py-4">
                   <Badge
                     variant={agent.status === "OK" ? "outline" : "secondary"}
                     className={
-                      agent.status === "Near Limit"
+                      agent.status === ClientStatusEnum.NEAR_LIMIT
                         ? "text-amber-500 border-amber-500/30 bg-amber-500/10"
-                        : agent.status === "Over"
+                        : agent.status === ClientStatusEnum.OVER_LIMIT
                         ? "text-red-500 border-red-500/30 bg-red-500/10"
-                        : agent.status === "Paused"
+                        : agent.status === ClientStatusEnum.PAUSED
                         ? "text-muted-foreground"
                         : ""
                     }
@@ -110,7 +105,7 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-1 flex-wrap max-w-[200px]">
-                    {agent.vendors.slice(0, 2).map((vendor, j) => (
+                    {agent.allowedVendors.slice(0, 2).map((vendor, j) => (
                       <Badge
                         key={j}
                         variant="secondary"
@@ -119,12 +114,12 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
                         {vendor}
                       </Badge>
                     ))}
-                    {agent.vendors.length > 2 && (
+                    {agent.allowedVendors.length > 2 && (
                       <Badge
                         variant="secondary"
                         className="text-[10px] px-1.5 py-0 h-5 font-normal"
                       >
-                        +{agent.vendors.length - 2}
+                        +{agent.allowedVendors.length - 2}
                       </Badge>
                     )}
                   </div>
@@ -143,23 +138,25 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
                         className="h-8 w-8"
                         onClick={async () => {
                           try {
-                            setLoadingId(agent.id)
-                            const newStatus = agent.status === "Paused" ? "OK" : "Paused"
-                            const res = await fetch(`/api/clients?id=${agent.id}`, {
-                              method: "PATCH",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ status: newStatus }),
-                            })
-                            if (res.ok) onAction?.()
+                            setLoadingId(agent.id);
+                            const newStatus =
+                              agent.status === ClientStatusEnum.PAUSED
+                                ? ClientStatusEnum.OK
+                                : ClientStatusEnum.PAUSED;
+                            await updateAgent.mutateAsync({
+                              id: agent.id,
+                              status: newStatus,
+                            });
+                            if (onAction) onAction();
                           } catch (err) {
-                            console.error(err)
+                            console.error(err);
                           } finally {
-                            setLoadingId(null)
+                            setLoadingId(null);
                           }
                         }}
                         disabled={loadingId === agent.id}
                       >
-                        {agent.status === "Paused" ? (
+                        {agent.status === ClientStatusEnum.PAUSED ? (
                           <Play className="h-4 w-4" />
                         ) : (
                           <Pause className="h-4 w-4" />
@@ -172,17 +169,15 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
                         size="icon"
                         className="h-8 w-8"
                         onClick={async () => {
-                          if (!confirm(`Delete agent ${agent.name}?`)) return
+                          if (!confirm(`Delete agent ${agent.name}?`)) return;
                           try {
-                            setLoadingId(agent.id)
-                            const res = await fetch(`/api/clients?id=${agent.id}`, {
-                              method: "DELETE",
-                            })
-                            if (res.ok) onAction?.()
+                            setLoadingId(agent.id);
+                            await deleteAgent.mutateAsync(agent.id);
+                            if (onAction) onAction();
                           } catch (err) {
-                            console.error(err)
+                            console.error(err);
                           } finally {
-                            setLoadingId(null)
+                            setLoadingId(null);
                           }
                         }}
                         disabled={loadingId === agent.id}
@@ -199,6 +194,5 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
         </table>
       </div>
     </Card>
-  )
+  );
 }
-
