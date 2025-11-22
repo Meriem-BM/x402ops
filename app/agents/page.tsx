@@ -1,82 +1,75 @@
 "use client"
 
+import { useCallback, useEffect, useState } from "react"
 import { Search } from "lucide-react"
 import { DashboardShell } from "@/components/dashboard-shell"
 import { Input } from "@/components/ui/input"
 import { AgentHeader } from "@/components/agents/agent-header"
 import { AgentTable } from "@/components/agents/agent-table"
 
-const agents = [
-  {
-    id: "1",
-    name: "Research Assistant",
-    type: "Agent",
-    address: "0x7a1b...23f",
-    limit: 10,
-    status: "OK",
-    vendors: ["OpenAI API", "Perplexity"],
-  },
-  {
-    id: "2",
-    name: "Trading Bot Alpha",
-    type: "Service",
-    address: "0x9b2c...41a",
-    limit: 50,
-    status: "Near Limit",
-    vendors: ["DeFi Llama", "CoinGecko", "1inch API"],
-  },
-  {
-    id: "3",
-    name: "Customer Support",
-    type: "App",
-    address: "0x2c3d...78e",
-    limit: 5,
-    status: "OK",
-    vendors: ["Anthropic API"],
-  },
-  {
-    id: "4",
-    name: "Content Generator",
-    type: "Agent",
-    address: "0x5f4e...19d",
-    limit: 20,
-    status: "OK",
-    vendors: ["OpenAI API", "DALL-E"],
-  },
-  {
-    id: "5",
-    name: "Data Scraper",
-    type: "Service",
-    address: "0x1e5f...64b",
-    limit: 15,
-    status: "Paused",
-    vendors: ["Browserless", "SerpAPI"],
-  },
-  {
-    id: "6",
-    name: "Email Classifier",
-    type: "Agent",
-    address: "0x8g6h...25c",
-    limit: 8,
-    status: "OK",
-    vendors: ["Anthropic API"],
-  },
-  {
-    id: "7",
-    name: "Market Monitor",
-    type: "Service",
-    address: "0x3h7i...92k",
-    limit: 30,
-    status: "Over",
-    vendors: ["CoinMarketCap", "News API"],
-  },
-]
+interface RawClient {
+  id: string
+  name: string
+  type: string
+  cdpWalletAddress?: string
+  dailyLimit: string | number
+  spentToday: string | number
+  allowedVendors: string[]
+  status: string
+}
+
+interface Agent {
+  id: string
+  name: string
+  type: string
+  address: string
+  limit: number
+  status: string
+  vendors: string[]
+}
 
 export default function AgentsPage() {
+  const [agents, setAgents] = useState<Agent[]>([])
+
+  const fetchClients = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/clients`)
+      if (!res.ok) return
+      const data = await res.json()
+      const rows: RawClient[] = data.clients ?? []
+      const mapped = rows.map((r) => ({
+        id: r.id,
+        name: r.name,
+        type: r.type.charAt(0).toUpperCase() + r.type.slice(1),
+        address: r.cdpWalletAddress ?? "",
+        limit: Number(r.dailyLimit),
+        status:
+          r.status === "NEAR_LIMIT"
+            ? "Near Limit"
+            : r.status === "OVER_LIMIT"
+            ? "Over"
+            : r.status === "PAUSED"
+            ? "Paused"
+            : "OK",
+        vendors: r.allowedVendors ?? [],
+      }))
+      setAgents(mapped)
+    } catch (err) {
+      console.error(err)
+    }
+  }, [])
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      void fetchClients()
+    }, 0)
+    return () => clearTimeout(t)
+  }, [fetchClients])
+
   return (
     <DashboardShell>
       <div className="space-y-6">
-        <AgentHeader />
+        <AgentHeader orgAddress={process.env.NEXT_PUBLIC_ORG_ADDRESS} onCreated={fetchClients} />
 
         <div className="flex items-center gap-3">
           <div className="relative flex-1 max-w-sm">
@@ -85,7 +78,7 @@ export default function AgentsPage() {
           </div>
         </div>
 
-        <AgentTable agents={agents} />
+        <AgentTable agents={agents} onAction={fetchClients} />
       </div>
     </DashboardShell>
   )

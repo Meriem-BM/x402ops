@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { clients } from "@/lib/db/schema";
 import { eq, type InferInsertModel } from "drizzle-orm";
 import { ClientType, VendorId } from "@/types";
+import { z } from "zod";
 
 const id = () => crypto.randomUUID();
 
@@ -11,48 +12,56 @@ function todayDateString() {
 }
 
 export async function GET(req: NextRequest) {
-  const orgAddress = req.nextUrl.searchParams.get("orgAddress") ?? undefined;
+  try {
+    const orgAddress = req.nextUrl.searchParams.get("orgAddress") ?? undefined;
 
-  const rows = await db
-    .select()
-    .from(clients)
-    .where(
-      orgAddress
-        ? eq(clients.orgAddress, orgAddress.toLowerCase())
-        : undefined
-    )
-    .execute()
-    .catch(async () => {
-      // Fallback: no where clause if orgAddress not provided
-      return await db.select().from(clients);
-    });
+    const rows = await db
+      .select()
+      .from(clients)
+      .where(
+        orgAddress
+          ? eq(clients.orgAddress, orgAddress.toLowerCase())
+          : undefined
+      )
+      .execute()
+      .catch(async () => {
+        // Fallback: no where clause if orgAddress not provided
+        return await db.select().from(clients);
+      });
 
-  // Parse allowedVendors JSON
-  const data = rows.map((row) => ({
-    ...row,
-    allowedVendors: JSON.parse(row.allowedVendors) as VendorId[],
-  }));
+    // Parse allowedVendors JSON
+    const data = rows.map((row) => ({
+      ...row,
+      allowedVendors: JSON.parse(row.allowedVendors) as VendorId[],
+    }));
 
-  return NextResponse.json({ clients: data });
+    return NextResponse.json({ clients: data });
+  } catch (err) {
+    // Surface the error as JSON in development to aid debugging
+    const msg = err instanceof Error ? err.message : String(err);
+    const stack = err instanceof Error && err.stack ? err.stack : undefined;
+    return NextResponse.json({ error: msg, stack }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const {
-    orgAddress,
-    name,
-    type,
-    network,
-    dailyLimit,
-    allowedVendors,
-  }: {
-    orgAddress: string;
-    name: string;
-    type: ClientType;
-    network: string;
-    dailyLimit: number;
-    allowedVendors: VendorId[];
-  } = body;
+  const body = await req.json().catch(() => ({}));
+
+  const postSchema = z.object({
+    orgAddress: z.string().min(1),
+    name: z.string().min(1),
+    type: z.enum(["agent", "service", "app"]),
+    network: z.string().min(1),
+    dailyLimit: z.number().nonnegative(),
+    allowedVendors: z.array(z.string()).optional(),
+  });
+
+  const parsed = postSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.format() }, { status: 400 });
+  }
+
+  const { orgAddress, name, type, network, dailyLimit, allowedVendors } = parsed.data;
 
   const now = todayDateString();
 
@@ -61,13 +70,13 @@ export async function POST(req: NextRequest) {
     .values({
       id: id(),
       orgAddress: orgAddress.toLowerCase(),
-      name,
+      name: name.trim(),
       type,
       network,
       dailyLimit: String(dailyLimit),
       spentToday: "0",
       lastResetDate: now,
-      allowedVendors: JSON.stringify(allowedVendors),
+      allowedVendors: JSON.stringify(allowedVendors ?? []),
       status: "OK",
     })
     .returning();
@@ -93,7 +102,25 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Missing id" }, { status: 400 });
   }
 
-  const body = (await req.json()) as Partial<{
+  const body = await req.json().catch(() => ({}));
+
+  const patchSchema = z
+    .object({
+      name: z.string().min(1).optional(),
+      type: z.enum(["agent", "service", "app"]).optional(),
+      network: z.string().min(1).optional(),
+      dailyLimit: z.number().nonnegative().optional(),
+      allowedVendors: z.array(z.string()).optional(),
+      status: z.string().optional(),
+    })
+    .partial();
+
+  const parsed = patchSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.format() }, { status: 400 });
+  }
+
+  const parsedBody = parsed.data as Partial<{
     name: string;
     type: ClientType;
     network: string;
@@ -106,14 +133,14 @@ export async function PATCH(req: NextRequest) {
     updatedAt: new Date(),
   };
 
-  if (body.name) patch.name = body.name;
-  if (body.type) patch.type = body.type;
-  if (body.network) patch.network = body.network;
-  if (typeof body.dailyLimit === "number")
-    patch.dailyLimit = String(body.dailyLimit);
-  if (body.allowedVendors)
-    patch.allowedVendors = JSON.stringify(body.allowedVendors);
-  if (body.status) patch.status = body.status;
+  if (parsedBody.name) patch.name = parsedBody.name.trim();
+  if (parsedBody.type) patch.type = parsedBody.type;
+  if (parsedBody.network) patch.network = parsedBody.network;
+  if (typeof parsedBody.dailyLimit === "number")
+    patch.dailyLimit = String(parsedBody.dailyLimit);
+  if (parsedBody.allowedVendors)
+    patch.allowedVendors = JSON.stringify(parsedBody.allowedVendors);
+  if (parsedBody.status) patch.status = parsedBody.status;
 
   const [updated] = await db
     .update(clients)
@@ -133,4 +160,22 @@ export async function PATCH(req: NextRequest) {
   };
 
   return NextResponse.json({ client });
+}
+
+export async function DELETE(req: NextRequest) {
+  const idParam = req.nextUrl.searchParams.get("id");
+  if (!idParam) {
+    return NextResponse.json({ error: "Missing id" }, { status: 400 });
+  }
+
+  const deleted = await db
+    .delete(clients)
+    .where(eq(clients.id, idParam))
+    .returning();
+
+  if (!deleted || deleted.length === 0) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  return NextResponse.json({ client: deleted[0] });
 }
