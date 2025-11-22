@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
-export type ModalType = "AGENT_FORM" | "DELETE_AGENT" | null;
+export type ModalType = 'AGENT_FORM' | 'DELETE_AGENT' | null;
 
 interface ModalContextType {
   isOpen: boolean;
@@ -51,7 +51,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 export function useModal() {
   const context = useContext(ModalContext);
   if (context === undefined) {
-    throw new Error("useModal must be used within a ModalProvider");
+    throw new Error('useModal must be used within a ModalProvider');
   }
   return context;
 }

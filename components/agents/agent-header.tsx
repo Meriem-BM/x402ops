@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useModal } from "@/contexts/modal-context";
+import { Plus } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { useModal } from '@/contexts/modal-context';
 
 export function AgentHeader({ onCreated }: { onCreated?: () => void }) {
   const { openModal } = useModal();
@@ -15,10 +16,7 @@ export function AgentHeader({ onCreated }: { onCreated?: () => void }) {
           Manage AI agents, services, and their CDP wallets.
         </p>
       </div>
-      <Button
-        className="gap-2"
-        onClick={() => openModal("AGENT_FORM", { onCreated })}
-      >
+      <Button className="gap-2" onClick={() => openModal('AGENT_FORM', { onCreated })}>
         <Plus className="h-4 w-4" />
         Add Agent
       </Button>

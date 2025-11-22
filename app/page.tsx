@@ -1,7 +1,7 @@
-import { DashboardShell } from "@/components/dashboard-shell";
-import { StatsCards } from "@/components/dashboard/stats-cards";
-import { AgentsList } from "@/components/dashboard/agents-list";
-import { RecentActivity } from "@/components/dashboard/recent-activity";
+import { AgentsList } from '@/components/dashboard/agents-list';
+import { RecentActivity } from '@/components/dashboard/recent-activity';
+import { StatsCards } from '@/components/dashboard/stats-cards';
+import { DashboardShell } from '@/components/dashboard-shell';
 
 export default function DashboardPage() {
   return (

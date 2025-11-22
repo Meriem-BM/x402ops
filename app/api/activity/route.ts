@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { activityEvents } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { db } from '@/lib/db';
+import { activityEvents } from '@/lib/db/schema';
 
 export async function GET(req: NextRequest) {
-  const orgAddress = req.nextUrl.searchParams.get("orgAddress") ?? undefined;
+  const orgAddress = req.nextUrl.searchParams.get('orgAddress') ?? undefined;
 
   const rows = await (orgAddress
     ? db

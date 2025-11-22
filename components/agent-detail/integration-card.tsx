@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface IntegrationCardProps {
   id: string;
@@ -16,7 +10,9 @@ export function IntegrationCard({ id, network }: IntegrationCardProps) {
     <Card>
       <CardHeader>
         <CardTitle>Integration</CardTitle>
-        <CardDescription>Configure your AI agent to use this CDP wallet when making x402 payments</CardDescription>
+        <CardDescription>
+          Configure your AI agent to use this CDP wallet when making x402 payments
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
@@ -24,7 +20,7 @@ export function IntegrationCard({ id, network }: IntegrationCardProps) {
           <div className="bg-secondary/50 rounded-lg p-4 font-mono text-xs space-y-1">
             <div>AGENTPAY_WALLET_ID={id}</div>
             <div>CDP_API_KEY=your_api_key_here</div>
-            <div>CDP_NETWORK={network.toLowerCase().replace(" ", "-")}</div>
+            <div>CDP_NETWORK={network.toLowerCase().replace(' ', '-')}</div>
           </div>
         </div>
         <div>
@@ -48,11 +44,10 @@ const response = await fetchWithPaymentX402(
           </div>
         </div>
         <p className="text-xs text-muted-foreground">
-          Policy rules will be enforced automatically on every transaction. Blocked transactions will throw an
-          error.
+          Policy rules will be enforced automatically on every transaction. Blocked transactions
+          will throw an error.
         </p>
       </CardContent>
     </Card>
   );
 }
-

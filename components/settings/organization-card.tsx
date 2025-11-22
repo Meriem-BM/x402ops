@@ -1,12 +1,7 @@
-import { Building2 } from "lucide-react"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import { Building2 } from 'lucide-react';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 export function OrganizationCard() {
   return (
@@ -16,9 +11,7 @@ export function OrganizationCard() {
           <Building2 className="h-5 w-5 text-muted-foreground" />
           <CardTitle>Organization</CardTitle>
         </div>
-        <CardDescription>
-          Organization details and connected wallet
-        </CardDescription>
+        <CardDescription>Organization details and connected wallet</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid gap-4 sm:grid-cols-2">
@@ -35,11 +28,10 @@ export function OrganizationCard() {
         </div>
         <Separator />
         <p className="text-sm text-muted-foreground">
-          This wallet manages your AgentPay Ops configuration and has
-          administrative access to all agent wallets.
+          This wallet manages your AgentPay Ops configuration and has administrative access to all
+          agent wallets.
         </p>
       </CardContent>
     </Card>
-  )
+  );
 }
-

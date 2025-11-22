@@ -1,12 +1,8 @@
-import { Copy, ExternalLink } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Copy, ExternalLink } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface WalletCardProps {
   wallet: string;
@@ -43,4 +39,3 @@ export function WalletCard({ wallet, network }: WalletCardProps) {
     </Card>
   );
 }
-

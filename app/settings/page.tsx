@@ -1,8 +1,8 @@
-import { DashboardShell } from "@/components/dashboard-shell"
-import { SettingsHeader } from "@/components/settings/settings-header"
-import { OrganizationCard } from "@/components/settings/organization-card"
-import { CDPConfigurationCard } from "@/components/settings/cdp-configuration-card"
-import { ResourcesCard } from "@/components/settings/resources-card"
+import { DashboardShell } from '@/components/dashboard-shell';
+import { CDPConfigurationCard } from '@/components/settings/cdp-configuration-card';
+import { OrganizationCard } from '@/components/settings/organization-card';
+import { ResourcesCard } from '@/components/settings/resources-card';
+import { SettingsHeader } from '@/components/settings/settings-header';
 
 export default function SettingsPage() {
   return (
@@ -14,5 +14,5 @@ export default function SettingsPage() {
         <ResourcesCard />
       </div>
     </DashboardShell>
-  )
+  );
 }

@@ -1,20 +1,21 @@
-"use client"
+'use client';
 
-import { Download, Filter } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Download, Filter } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from '@/components/ui/select';
 
 interface ActivityHeaderProps {
-  agentFilter: string
-  setAgentFilter: (value: string) => void
-  statusFilter: string
-  setStatusFilter: (value: string) => void
+  agentFilter: string;
+  setAgentFilter: (value: string) => void;
+  statusFilter: string;
+  setStatusFilter: (value: string) => void;
 }
 
 export function ActivityHeader({
@@ -66,6 +67,5 @@ export function ActivityHeader({
         </div>
       </div>
     </>
-  )
+  );
 }
-

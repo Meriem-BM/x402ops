@@ -1,57 +1,51 @@
-import {
-  pgTable,
-  text,
-  varchar,
-  timestamp,
-  numeric,
-  date,
-} from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
-import { ClientStatus, ClientType } from "@/types/client";
-import { ActivityStatus } from "@/types/activity";
+import { sql } from 'drizzle-orm';
+import { pgTable, text, varchar, timestamp, numeric, date } from 'drizzle-orm/pg-core';
 
-export const clients = pgTable("clients", {
-  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
-  orgAddress: varchar("org_address", { length: 80 }).notNull(),
-  name: varchar("name", { length: 120 }).notNull(),
-  type: varchar("type", { length: 20 }).notNull().$type<ClientType>(), // "agent" | "service" | "app"
-  network: varchar("network", { length: 80 }).notNull(),
+import { ActivityStatus } from '@/types/activity';
+import { ClientStatus, ClientType } from '@/types/client';
 
-  dailyLimit: numeric("daily_limit", { precision: 18, scale: 6 }).notNull(),
-  spentToday: numeric("spent_today", { precision: 18, scale: 6 })
-    .notNull()
-    .default("0"),
-  lastResetDate: date("last_reset_date").notNull(),
+export const clients = pgTable('clients', {
+  id: text('id')
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  orgAddress: varchar('org_address', { length: 80 }).notNull(),
+  name: varchar('name', { length: 120 }).notNull(),
+  type: varchar('type', { length: 20 }).notNull().$type<ClientType>(), // "agent" | "service" | "app"
+  network: varchar('network', { length: 80 }).notNull(),
 
-  allowedVendors: text("allowed_vendors").notNull().default("[]"), // store as JSON string
+  dailyLimit: numeric('daily_limit', { precision: 18, scale: 6 }).notNull(),
+  spentToday: numeric('spent_today', { precision: 18, scale: 6 }).notNull().default('0'),
+  lastResetDate: date('last_reset_date').notNull(),
 
-  status: varchar("status", { length: 20 }).notNull().$type<ClientStatus>().default("OK"),
+  allowedVendors: text('allowed_vendors').notNull().default('[]'), // store as JSON string
 
-  cdpWalletId: text("cdp_wallet_id"),
-  cdpWalletAddress: varchar("cdp_wallet_address", { length: 80 }),
+  status: varchar('status', { length: 20 }).notNull().$type<ClientStatus>().default('OK'),
 
-  createdAt: timestamp("created_at")
+  cdpWalletId: text('cdp_wallet_id'),
+  cdpWalletAddress: varchar('cdp_wallet_address', { length: 80 }),
+
+  createdAt: timestamp('created_at')
     .notNull()
     .default(sql`now()`),
-  updatedAt: timestamp("updated_at")
+  updatedAt: timestamp('updated_at')
     .notNull()
     .default(sql`now()`),
 });
 
-export const activityEvents = pgTable("activity_events", {
-  id: text("id").primaryKey(),
-  clientId: text("client_id")
+export const activityEvents = pgTable('activity_events', {
+  id: text('id').primaryKey(),
+  clientId: text('client_id')
     .notNull()
-    .references(() => clients.id, { onDelete: "cascade" }),
-  orgAddress: varchar("org_address", { length: 80 }).notNull(),
-  walletAddress: varchar("wallet_address", { length: 80 }),
-  vendor: varchar("vendor", { length: 80 }),
-  amount: numeric("amount", { precision: 18, scale: 6 }).notNull(),
-  assetSymbol: varchar("asset_symbol", { length: 16 }).notNull(), // e.g. "USDC"
-  status: varchar("status", { length: 20 }).notNull().$type<ActivityStatus>(), // "SUCCESS" | "BLOCKED" | "FAILED"
-  reason: text("reason"),
-  txHash: varchar("tx_hash", { length: 100 }),
-  createdAt: timestamp("created_at")
+    .references(() => clients.id, { onDelete: 'cascade' }),
+  orgAddress: varchar('org_address', { length: 80 }).notNull(),
+  walletAddress: varchar('wallet_address', { length: 80 }),
+  vendor: varchar('vendor', { length: 80 }),
+  amount: numeric('amount', { precision: 18, scale: 6 }).notNull(),
+  assetSymbol: varchar('asset_symbol', { length: 16 }).notNull(), // e.g. "USDC"
+  status: varchar('status', { length: 20 }).notNull().$type<ActivityStatus>(), // "SUCCESS" | "BLOCKED" | "FAILED"
+  reason: text('reason'),
+  txHash: varchar('tx_hash', { length: 100 }),
+  createdAt: timestamp('created_at')
     .notNull()
     .default(sql`now()`),
 });

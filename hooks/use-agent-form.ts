@@ -1,22 +1,23 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useCreateAgent } from "@/hooks/useAgent";
-import { useOrg } from "@/contexts/org-context";
-import { ClientType } from "@/types/client";
+import { useState } from 'react';
+
+import { useOrg } from '@/contexts/org-context';
+import { useCreateAgent } from '@/hooks/useAgent';
+import { ClientType } from '@/types/client';
 
 export type AgentFormValues = {
   name: string;
   type: ClientType;
   network: string;
-  preset: "low" | "standard" | "high";
+  preset: 'low' | 'standard' | 'high';
 };
 
 const defaultValues: AgentFormValues = {
-  name: "",
-  type: "agent",
-  network: "base",
-  preset: "standard",
+  name: '',
+  type: 'agent',
+  network: 'base',
+  preset: 'standard',
 };
 
 export function useAgentForm(onSuccess?: () => void) {
@@ -30,9 +31,9 @@ export function useAgentForm(onSuccess?: () => void) {
 
   const presetToLimit = (p: string) => {
     switch (p) {
-      case "low":
+      case 'low':
         return 1;
-      case "high":
+      case 'high':
         return 20;
       default:
         return 5;

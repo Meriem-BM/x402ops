@@ -1,11 +1,7 @@
-import { TrendingUp } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { TrendingUp } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface UsageCardProps {
   spentToday: number;
@@ -46,4 +42,3 @@ export function UsageCard({ spentToday, dailyLimit }: UsageCardProps) {
     </Card>
   );
 }
-

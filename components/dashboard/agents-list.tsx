@@ -1,13 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import Link from "next/link";
+import Link from 'next/link';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 function BotIcon({ className }: { className?: string }) {
   return (
@@ -37,9 +32,7 @@ export function AgentsList() {
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="space-y-1">
           <CardTitle>Top Agents</CardTitle>
-          <CardDescription>
-            Usage and status of your most active agents.
-          </CardDescription>
+          <CardDescription>Usage and status of your most active agents.</CardDescription>
         </div>
         <Button variant="outline" size="sm" asChild>
           <Link href="/agents">View All</Link>
@@ -49,44 +42,44 @@ export function AgentsList() {
         <div className="space-y-4">
           {[
             {
-              name: "Research Assistant",
-              type: "Agent",
-              address: "0x7a...3f",
+              name: 'Research Assistant',
+              type: 'Agent',
+              address: '0x7a...3f',
               limit: 10,
               spent: 2.4,
-              status: "OK",
+              status: 'OK',
             },
             {
-              name: "Trading Bot Alpha",
-              type: "Service",
-              address: "0x9b...1a",
+              name: 'Trading Bot Alpha',
+              type: 'Service',
+              address: '0x9b...1a',
               limit: 50,
               spent: 48.5,
-              status: "Near Limit",
+              status: 'Near Limit',
             },
             {
-              name: "Customer Support",
-              type: "App",
-              address: "0x2c...8e",
+              name: 'Customer Support',
+              type: 'App',
+              address: '0x2c...8e',
               limit: 5,
               spent: 0.5,
-              status: "OK",
+              status: 'OK',
             },
             {
-              name: "Content Generator",
-              type: "Agent",
-              address: "0x5f...9d",
+              name: 'Content Generator',
+              type: 'Agent',
+              address: '0x5f...9d',
               limit: 20,
               spent: 1.2,
-              status: "OK",
+              status: 'OK',
             },
             {
-              name: "Data Scraper",
-              type: "Service",
-              address: "0x1e...4b",
+              name: 'Data Scraper',
+              type: 'Service',
+              address: '0x1e...4b',
               limit: 15,
               spent: 0,
-              status: "Paused",
+              status: 'Paused',
             },
           ].map((agent, i) => (
             <div
@@ -100,39 +93,32 @@ export function AgentsList() {
                 <div>
                   <div className="flex items-center gap-2">
                     <p className="font-medium text-sm">{agent.name}</p>
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] h-5 px-1.5 font-normal"
-                    >
+                    <Badge variant="outline" className="text-[10px] h-5 px-1.5 font-normal">
                       {agent.type}
                     </Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground font-mono">
-                    {agent.address}
-                  </p>
+                  <p className="text-xs text-muted-foreground font-mono">{agent.address}</p>
                 </div>
               </div>
               <div className="flex items-center gap-6 text-right">
                 <div className="hidden sm:block">
-                  <p className="text-xs text-muted-foreground">
-                    Spend / Limit
-                  </p>
+                  <p className="text-xs text-muted-foreground">Spend / Limit</p>
                   <p className="text-sm font-medium">
                     ${agent.spent} / ${agent.limit}
                   </p>
                 </div>
                 <Badge
                   variant={
-                    agent.status === "OK"
-                      ? "outline"
-                      : agent.status === "Near Limit"
-                      ? "secondary"
-                      : "secondary"
+                    agent.status === 'OK'
+                      ? 'outline'
+                      : agent.status === 'Near Limit'
+                        ? 'secondary'
+                        : 'secondary'
                   }
                   className={
-                    agent.status === "Near Limit"
-                      ? "text-amber-500 border-amber-500/30 bg-amber-500/10"
-                      : ""
+                    agent.status === 'Near Limit'
+                      ? 'text-amber-500 border-amber-500/30 bg-amber-500/10'
+                      : ''
                   }
                 >
                   {agent.status}
@@ -145,4 +131,3 @@ export function AgentsList() {
     </Card>
   );
 }
-

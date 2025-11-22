@@ -1,7 +1,8 @@
-import { ArrowLeft, Pause } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Pause } from 'lucide-react';
+import Link from 'next/link';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 interface AgentHeaderProps {
   name: string;
@@ -26,7 +27,7 @@ export function AgentHeader({ name, type, status }: AgentHeaderProps) {
       </div>
       <div className="flex items-center gap-2">
         <Badge
-          variant={status === "Active" ? "outline" : "secondary"}
+          variant={status === 'Active' ? 'outline' : 'secondary'}
           className="text-green-500 border-green-500/30 bg-green-500/10"
         >
           {status}
@@ -39,4 +40,3 @@ export function AgentHeader({ name, type, status }: AgentHeaderProps) {
     </div>
   );
 }
-

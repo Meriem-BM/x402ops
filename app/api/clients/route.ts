@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { clients } from "@/lib/db/schema";
-import { eq, type InferInsertModel } from "drizzle-orm";
-import { ClientType, VendorId } from "@/types";
-import { z } from "zod";
+import { eq, type InferInsertModel } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+import { db } from '@/lib/db';
+import { clients } from '@/lib/db/schema';
+import { ClientStatus, ClientType, VendorId } from '@/types';
 
 const id = () => crypto.randomUUID();
 
@@ -13,16 +14,12 @@ function todayDateString() {
 
 export async function GET(req: NextRequest) {
   try {
-    const orgAddress = req.nextUrl.searchParams.get("orgAddress") ?? undefined;
+    const orgAddress = req.nextUrl.searchParams.get('orgAddress') ?? undefined;
 
     const rows = await db
       .select()
       .from(clients)
-      .where(
-        orgAddress
-          ? eq(clients.orgAddress, orgAddress.toLowerCase())
-          : undefined
-      )
+      .where(orgAddress ? eq(clients.orgAddress, orgAddress.toLowerCase()) : undefined)
       .execute()
       .catch(async () => {
         // Fallback: no where clause if orgAddress not provided
@@ -50,7 +47,7 @@ export async function POST(req: NextRequest) {
   const postSchema = z.object({
     orgAddress: z.string().min(1),
     name: z.string().min(1),
-    type: z.enum(["agent", "service", "app"]),
+    type: z.enum(['agent', 'service', 'app']),
     network: z.string().min(1),
     dailyLimit: z.number().nonnegative(),
     allowedVendors: z.array(z.string()).optional(),
@@ -74,10 +71,10 @@ export async function POST(req: NextRequest) {
       type,
       network,
       dailyLimit: String(dailyLimit),
-      spentToday: "0",
+      spentToday: '0',
       lastResetDate: now,
       allowedVendors: JSON.stringify(allowedVendors ?? []),
-      status: "OK",
+      status: 'OK',
     })
     .returning();
 
@@ -97,9 +94,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  const idParam = req.nextUrl.searchParams.get("id");
+  const idParam = req.nextUrl.searchParams.get('id');
   if (!idParam) {
-    return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    return NextResponse.json({ error: 'Missing id' }, { status: 400 });
   }
 
   const body = await req.json().catch(() => ({}));
@@ -107,7 +104,7 @@ export async function PATCH(req: NextRequest) {
   const patchSchema = z
     .object({
       name: z.string().min(1).optional(),
-      type: z.enum(["agent", "service", "app"]).optional(),
+      type: z.enum(['agent', 'service', 'app']).optional(),
       network: z.string().min(1).optional(),
       dailyLimit: z.number().nonnegative().optional(),
       allowedVendors: z.array(z.string()).optional(),
@@ -126,7 +123,7 @@ export async function PATCH(req: NextRequest) {
     network: string;
     dailyLimit: number;
     allowedVendors: VendorId[];
-    status: string;
+    status: ClientStatus;
   }>;
 
   const patch: Partial<InferInsertModel<typeof clients>> = {
@@ -136,20 +133,14 @@ export async function PATCH(req: NextRequest) {
   if (parsedBody.name) patch.name = parsedBody.name.trim();
   if (parsedBody.type) patch.type = parsedBody.type;
   if (parsedBody.network) patch.network = parsedBody.network;
-  if (typeof parsedBody.dailyLimit === "number")
-    patch.dailyLimit = String(parsedBody.dailyLimit);
-  if (parsedBody.allowedVendors)
-    patch.allowedVendors = JSON.stringify(parsedBody.allowedVendors);
+  if (typeof parsedBody.dailyLimit === 'number') patch.dailyLimit = String(parsedBody.dailyLimit);
+  if (parsedBody.allowedVendors) patch.allowedVendors = JSON.stringify(parsedBody.allowedVendors);
   if (parsedBody.status) patch.status = parsedBody.status;
 
-  const [updated] = await db
-    .update(clients)
-    .set(patch)
-    .where(eq(clients.id, idParam))
-    .returning();
+  const [updated] = await db.update(clients).set(patch).where(eq(clients.id, idParam)).returning();
 
   if (!updated) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
   const client = {
@@ -163,18 +154,15 @@ export async function PATCH(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const idParam = req.nextUrl.searchParams.get("id");
+  const idParam = req.nextUrl.searchParams.get('id');
   if (!idParam) {
-    return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    return NextResponse.json({ error: 'Missing id' }, { status: 400 });
   }
 
-  const deleted = await db
-    .delete(clients)
-    .where(eq(clients.id, idParam))
-    .returning();
+  const deleted = await db.delete(clients).where(eq(clients.id, idParam)).returning();
 
   if (!deleted || deleted.length === 0) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
   return NextResponse.json({ client: deleted[0] });

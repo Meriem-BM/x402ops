@@ -1,27 +1,21 @@
-import { Badge } from "@/components/ui/badge"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export interface Activity {
-  time: string
-  agent: string
-  type: string
-  wallet: string
-  vendor: string
-  amount: number
-  asset: string
-  status: string
-  reason: string
-  tx: string
+  time: string;
+  agent: string;
+  type: string;
+  wallet: string;
+  vendor: string;
+  amount: number;
+  asset: string;
+  status: string;
+  reason: string;
+  tx: string;
 }
 
 interface ActivityHistoryTableProps {
-  activities: Activity[]
+  activities: Activity[];
 }
 
 export function ActivityHistoryTable({ activities }: ActivityHistoryTableProps) {
@@ -29,39 +23,21 @@ export function ActivityHistoryTable({ activities }: ActivityHistoryTableProps) 
     <Card>
       <CardHeader>
         <CardTitle>Transaction History</CardTitle>
-        <CardDescription>
-          Complete log of all agent wallet activity
-        </CardDescription>
+        <CardDescription>Complete log of all agent wallet activity</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="relative overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="border-b">
               <tr>
-                <th className="text-left font-medium text-muted-foreground py-3 px-4">
-                  Time
-                </th>
-                <th className="text-left font-medium text-muted-foreground py-3 px-4">
-                  Agent
-                </th>
-                <th className="text-left font-medium text-muted-foreground py-3 px-4">
-                  Wallet
-                </th>
-                <th className="text-left font-medium text-muted-foreground py-3 px-4">
-                  Vendor
-                </th>
-                <th className="text-left font-medium text-muted-foreground py-3 px-4">
-                  Amount
-                </th>
-                <th className="text-left font-medium text-muted-foreground py-3 px-4">
-                  Status
-                </th>
-                <th className="text-left font-medium text-muted-foreground py-3 px-4">
-                  Reason
-                </th>
-                <th className="text-left font-medium text-muted-foreground py-3 px-4">
-                  Tx Hash
-                </th>
+                <th className="text-left font-medium text-muted-foreground py-3 px-4">Time</th>
+                <th className="text-left font-medium text-muted-foreground py-3 px-4">Agent</th>
+                <th className="text-left font-medium text-muted-foreground py-3 px-4">Wallet</th>
+                <th className="text-left font-medium text-muted-foreground py-3 px-4">Vendor</th>
+                <th className="text-left font-medium text-muted-foreground py-3 px-4">Amount</th>
+                <th className="text-left font-medium text-muted-foreground py-3 px-4">Status</th>
+                <th className="text-left font-medium text-muted-foreground py-3 px-4">Reason</th>
+                <th className="text-left font-medium text-muted-foreground py-3 px-4">Tx Hash</th>
               </tr>
             </thead>
             <tbody>
@@ -76,10 +52,7 @@ export function ActivityHistoryTable({ activities }: ActivityHistoryTableProps) 
                   <td className="py-3 px-4">
                     <div>
                       <div className="font-medium">{activity.agent}</div>
-                      <Badge
-                        variant="outline"
-                        className="text-[10px] px-1 py-0 h-4 mt-0.5"
-                      >
+                      <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 mt-0.5">
                         {activity.type}
                       </Badge>
                     </div>
@@ -95,15 +68,13 @@ export function ActivityHistoryTable({ activities }: ActivityHistoryTableProps) 
                   </td>
                   <td className="py-3 px-4">
                     <Badge
-                      variant={
-                        activity.status === "Success" ? "outline" : "secondary"
-                      }
+                      variant={activity.status === 'Success' ? 'outline' : 'secondary'}
                       className={
-                        activity.status === "Success"
-                          ? "text-green-500 border-green-500/30 bg-green-500/10"
-                          : activity.status === "Blocked"
-                          ? "text-amber-500 border-amber-500/30 bg-amber-500/10"
-                          : "text-red-500 border-red-500/30 bg-red-500/10"
+                        activity.status === 'Success'
+                          ? 'text-green-500 border-green-500/30 bg-green-500/10'
+                          : activity.status === 'Blocked'
+                            ? 'text-amber-500 border-amber-500/30 bg-amber-500/10'
+                            : 'text-red-500 border-red-500/30 bg-red-500/10'
                       }
                     >
                       {activity.status}
@@ -113,10 +84,8 @@ export function ActivityHistoryTable({ activities }: ActivityHistoryTableProps) 
                     {activity.reason}
                   </td>
                   <td className="py-3 px-4">
-                    {activity.tx !== "—" ? (
-                      <code className="text-xs font-mono text-muted-foreground">
-                        {activity.tx}
-                      </code>
+                    {activity.tx !== '—' ? (
+                      <code className="text-xs font-mono text-muted-foreground">{activity.tx}</code>
                     ) : (
                       <span className="text-muted-foreground">—</span>
                     )}
@@ -128,6 +97,5 @@ export function ActivityHistoryTable({ activities }: ActivityHistoryTableProps) 
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
-

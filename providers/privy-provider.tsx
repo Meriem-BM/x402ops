@@ -1,7 +1,7 @@
-import { PrivyProvider as ReactPrivyProvider } from "@privy-io/react-auth";
-import { createConfig } from "@privy-io/wagmi";
-import { base } from "viem/chains";
-import { http } from "wagmi";
+import { PrivyProvider as ReactPrivyProvider } from '@privy-io/react-auth';
+import { createConfig } from '@privy-io/wagmi';
+import { base } from 'viem/chains';
+import { http } from 'wagmi';
 
 export const config = createConfig({
   chains: [base],
@@ -10,23 +10,19 @@ export const config = createConfig({
   },
 });
 
-export default function PrivyProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PrivyProvider({ children }: { children: React.ReactNode }) {
   return (
     <ReactPrivyProvider
-      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ""}
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
       config={{
-        loginMethods: ["wallet", "email", "google"],
+        loginMethods: ['wallet', 'email', 'google'],
         appearance: {
-          theme: "light",
-          accentColor: "#676FFF",
+          theme: 'light',
+          accentColor: '#676FFF',
         },
         embeddedWallets: {
           ethereum: {
-            createOnLogin: "users-without-wallets",
+            createOnLogin: 'users-without-wallets',
           },
         },
         defaultChain: base,

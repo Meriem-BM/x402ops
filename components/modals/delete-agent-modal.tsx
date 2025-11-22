@@ -1,4 +1,6 @@
-"use client";
+'use client';
+
+import { useState } from 'react';
 
 import {
   AlertDialog,
@@ -9,17 +11,16 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { useModal } from "@/contexts/modal-context";
-import { useDeleteAgent } from "@/hooks/useAgent";
-import { useState } from "react";
+} from '@/components/ui/alert-dialog';
+import { useModal } from '@/contexts/modal-context';
+import { useDeleteAgent } from '@/hooks/useAgent';
 
 export function DeleteAgentModal() {
   const { isOpen, type, closeModal, props } = useModal();
   const deleteAgent = useDeleteAgent();
   const [loading, setLoading] = useState(false);
 
-  const isModalOpen = isOpen && type === "DELETE_AGENT";
+  const isModalOpen = isOpen && type === 'DELETE_AGENT';
   const agentId = props.agentId as string;
   const agentName = props.agentName as string;
 
@@ -46,8 +47,8 @@ export function DeleteAgentModal() {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will permanently delete the agent <strong>{agentName}</strong> and
-            remove it from your organization. This action cannot be undone.
+            This will permanently delete the agent <strong>{agentName}</strong> and remove it from
+            your organization. This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -60,7 +61,7 @@ export function DeleteAgentModal() {
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             disabled={loading}
           >
-            {loading ? "Deleting..." : "Delete Agent"}
+            {loading ? 'Deleting...' : 'Delete Agent'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

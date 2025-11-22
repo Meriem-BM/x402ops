@@ -1,17 +1,18 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { LayoutDashboard, Bot, Activity, Settings, Wallet } from "lucide-react";
-import { cn } from "@/utils/tw-utils";
-import { useOrg } from "@/contexts/org-context";
-import { shortenAddress } from "@/utils/address";
+import { LayoutDashboard, Bot, Activity, Settings, Wallet } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+import { useOrg } from '@/contexts/org-context';
+import { shortenAddress } from '@/utils/address';
+import { cn } from '@/utils/tw-utils';
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Agents", href: "/agents", icon: Bot },
-  { name: "Activity", href: "/activity", icon: Activity },
-  { name: "Settings", href: "/settings", icon: Settings },
+  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { name: 'Agents', href: '/agents', icon: Bot },
+  { name: 'Activity', href: '/activity', icon: Activity },
+  { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
 export function SidebarContent() {
@@ -32,17 +33,16 @@ export function SidebarContent() {
         <nav className="space-y-1">
           {navigation.map((item) => {
             const isActive =
-              pathname === item.href ||
-              (item.href !== "/" && pathname.startsWith(item.href));
+              pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                  'flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors',
                   isActive
-                    ? "bg-secondary text-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                    ? 'bg-secondary text-foreground'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                 )}
               >
                 <item.icon className="h-4 w-4" />

@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { Bell, LogOut, Menu, User, Wallet } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { usePathname } from "next/navigation";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { SidebarContent } from "@/components/sidebar";
-import { ModeToggle } from "@/components/mode-toggle";
-import { useState } from "react";
-import { useOrg } from "@/contexts/org-context";
+import { useState } from 'react';
+
+import { Bell, LogOut, Menu, User, Wallet } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+
+import { ModeToggle } from '@/components/mode-toggle';
+import { SidebarContent } from '@/components/sidebar';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,8 +15,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { shortenAddress } from "@/utils/address";
+} from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useOrg } from '@/contexts/org-context';
+import { shortenAddress } from '@/utils/address';
 
 export function TopNav() {
   const pathname = usePathname();
@@ -24,11 +26,9 @@ export function TopNav() {
   const { logout, orgAddress, login } = useOrg();
 
   const getTitle = () => {
-    if (pathname === "/") return "Dashboard";
-    const segment = pathname.split("/")[1];
-    return segment
-      ? segment.charAt(0).toUpperCase() + segment.slice(1)
-      : "Dashboard";
+    if (pathname === '/') return 'Dashboard';
+    const segment = pathname.split('/')[1];
+    return segment ? segment.charAt(0).toUpperCase() + segment.slice(1) : 'Dashboard';
   };
 
   return (
@@ -79,7 +79,7 @@ export function TopNav() {
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">Account</p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  {orgAddress ? shortenAddress(orgAddress) : "Not connected"}
+                  {orgAddress ? shortenAddress(orgAddress) : 'Not connected'}
                 </p>
               </div>
             </DropdownMenuLabel>

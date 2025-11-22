@@ -1,11 +1,12 @@
-"use client";
+'use client';
 
-import { OrgProvider } from "@/contexts/org-context";
-import { ThemeProvider } from "@/components/theme-provider";
-import PrivyProvider from "@/providers/privy-provider";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { ModalProvider } from "@/contexts/modal-context";
-import { ModalRoot } from "@/components/modal-root";
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+
+import { ModalRoot } from '@/components/modal-root';
+import { ThemeProvider } from '@/components/theme-provider';
+import { ModalProvider } from '@/contexts/modal-context';
+import { OrgProvider } from '@/contexts/org-context';
+import PrivyProvider from '@/providers/privy-provider';
 
 const queryClient = new QueryClient();
 

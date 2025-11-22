@@ -1,14 +1,9 @@
-import { ExternalLink, Key, Shield } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import { ExternalLink, Key, Shield } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 export function CDPConfigurationCard() {
   return (
@@ -18,9 +13,7 @@ export function CDPConfigurationCard() {
           <Shield className="h-5 w-5 text-muted-foreground" />
           <CardTitle>CDP Configuration</CardTitle>
         </div>
-        <CardDescription>
-          Coinbase Developer Platform integration settings
-        </CardDescription>
+        <CardDescription>Coinbase Developer Platform integration settings</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid gap-4 sm:grid-cols-2">
@@ -32,10 +25,7 @@ export function CDPConfigurationCard() {
           </div>
           <div>
             <div className="text-sm font-medium mb-1">API Key Status</div>
-            <Badge
-              variant="outline"
-              className="text-green-500 border-green-500/30 bg-green-500/10"
-            >
+            <Badge variant="outline" className="text-green-500 border-green-500/30 bg-green-500/10">
               <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5" />
               Connected
             </Badge>
@@ -53,6 +43,5 @@ export function CDPConfigurationCard() {
         </Button>
       </CardContent>
     </Card>
-  )
+  );
 }
-

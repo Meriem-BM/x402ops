@@ -1,6 +1,6 @@
-import { DashboardShell } from "@/components/dashboard-shell"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Card } from "@/components/ui/card"
+import { DashboardShell } from '@/components/dashboard-shell';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Loading() {
   return (
@@ -31,7 +31,10 @@ export default function Loading() {
             </div>
             {/* Table Rows */}
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="flex items-center justify-between py-4 border-b last:border-0">
+              <div
+                key={i}
+                className="flex items-center justify-between py-4 border-b last:border-0"
+              >
                 <Skeleton className="h-4 w-32" />
                 <Skeleton className="h-6 w-16 rounded-full" />
                 <Skeleton className="h-4 w-24" />
@@ -44,5 +47,5 @@ export default function Loading() {
         </Card>
       </div>
     </DashboardShell>
-  )
+  );
 }

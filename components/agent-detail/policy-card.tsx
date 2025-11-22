@@ -1,15 +1,14 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Settings } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useState } from 'react';
+
+import { Settings } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Sheet,
   SheetContent,
@@ -18,10 +17,8 @@ import {
   SheetTitle,
   SheetTrigger,
   SheetFooter,
-} from "@/components/ui/sheet";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
+} from '@/components/ui/sheet';
+import { Switch } from '@/components/ui/switch';
 
 interface PolicyCardProps {
   name: string;
@@ -92,7 +89,9 @@ export function PolicyCard({ name, dailyLimit, maxPerTx, vendors }: PolicyCardPr
                     <Label htmlFor="review" className="font-normal">
                       Manual review above 2 USDC
                     </Label>
-                    <p className="text-xs text-muted-foreground">Requires approval for large transactions</p>
+                    <p className="text-xs text-muted-foreground">
+                      Requires approval for large transactions
+                    </p>
                   </div>
                   <Switch id="review" />
                 </div>
@@ -120,7 +119,11 @@ export function PolicyCard({ name, dailyLimit, maxPerTx, vendors }: PolicyCardPr
           <div className="text-xs text-muted-foreground mb-1">Allowed Vendors</div>
           <div className="flex flex-wrap gap-1 mt-1">
             {vendors.map((vendor, i) => (
-              <Badge key={i} variant="secondary" className="text-[10px] px-1.5 py-0 h-5 font-normal">
+              <Badge
+                key={i}
+                variant="secondary"
+                className="text-[10px] px-1.5 py-0 h-5 font-normal"
+              >
                 {vendor}
               </Badge>
             ))}
@@ -130,4 +133,3 @@ export function PolicyCard({ name, dailyLimit, maxPerTx, vendors }: PolicyCardPr
     </Card>
   );
 }
-

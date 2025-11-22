@@ -1,7 +1,8 @@
-"use client";
+'use client';
 
-import { createContext, useContext } from "react";
-import { usePrivy } from "@privy-io/react-auth";
+import { createContext, useContext } from 'react';
+
+import { usePrivy } from '@privy-io/react-auth';
 
 interface OrgContextType {
   orgAddress: string | undefined;
@@ -16,9 +17,7 @@ export function OrgProvider({ children }: { children: React.ReactNode }) {
   const { user, authenticated, login, logout } = usePrivy();
 
   const orgAddress =
-    authenticated && user?.wallet?.address
-      ? user.wallet.address.toLowerCase()
-      : undefined;
+    authenticated && user?.wallet?.address ? user.wallet.address.toLowerCase() : undefined;
 
   return (
     <OrgContext.Provider
@@ -37,7 +36,7 @@ export function OrgProvider({ children }: { children: React.ReactNode }) {
 export function useOrg() {
   const context = useContext(OrgContext);
   if (context === undefined) {
-    throw new Error("useOrg must be used within an OrgProvider");
+    throw new Error('useOrg must be used within an OrgProvider');
   }
   return context;
 }

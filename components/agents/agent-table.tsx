@@ -1,14 +1,16 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { Copy, Pause, Play, Trash } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { ClientStatusEnum, IClient } from "@/types/client";
-import { useUpdateAgent } from "@/hooks/useAgent";
-import { useModal } from "@/contexts/modal-context";
+import { useState } from 'react';
+
+import { Copy, Pause, Play, Trash } from 'lucide-react';
+import Link from 'next/link';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { useModal } from '@/contexts/modal-context';
+import { useUpdateAgent } from '@/hooks/useAgent';
+import { ClientStatusEnum, IClient } from '@/types/client';
 
 interface AgentTableProps {
   agents: IClient[] | [];
@@ -26,27 +28,13 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
         <table className="w-full text-sm">
           <thead className="border-b">
             <tr>
-              <th className="text-left font-medium text-muted-foreground px-6 py-3">
-                Agent
-              </th>
-              <th className="text-left font-medium text-muted-foreground px-6 py-3">
-                Type
-              </th>
-              <th className="text-left font-medium text-muted-foreground px-6 py-3">
-                CDP Wallet
-              </th>
-              <th className="text-left font-medium text-muted-foreground px-6 py-3">
-                Daily Limit
-              </th>
-              <th className="text-left font-medium text-muted-foreground px-6 py-3">
-                Status
-              </th>
-              <th className="text-left font-medium text-muted-foreground px-6 py-3">
-                Vendors
-              </th>
-              <th className="text-right font-medium text-muted-foreground px-6 py-3">
-                Actions
-              </th>
+              <th className="text-left font-medium text-muted-foreground px-6 py-3">Agent</th>
+              <th className="text-left font-medium text-muted-foreground px-6 py-3">Type</th>
+              <th className="text-left font-medium text-muted-foreground px-6 py-3">CDP Wallet</th>
+              <th className="text-left font-medium text-muted-foreground px-6 py-3">Daily Limit</th>
+              <th className="text-left font-medium text-muted-foreground px-6 py-3">Status</th>
+              <th className="text-left font-medium text-muted-foreground px-6 py-3">Vendors</th>
+              <th className="text-right font-medium text-muted-foreground px-6 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -56,10 +44,7 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
                 className="border-b last:border-0 hover:bg-secondary/50 transition-colors group"
               >
                 <td className="px-6 py-4">
-                  <Link
-                    href={`/agents/${agent.id}`}
-                    className="font-medium hover:underline"
-                  >
+                  <Link href={`/agents/${agent.id}`} className="font-medium hover:underline">
                     {agent.name}
                   </Link>
                 </td>
@@ -84,21 +69,19 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-muted-foreground">
-                    {agent.dailyLimit} USDC
-                  </span>
+                  <span className="text-muted-foreground">{agent.dailyLimit} USDC</span>
                 </td>
                 <td className="px-6 py-4">
                   <Badge
-                    variant={agent.status === "OK" ? "outline" : "secondary"}
+                    variant={agent.status === 'OK' ? 'outline' : 'secondary'}
                     className={
                       agent.status === ClientStatusEnum.NEAR_LIMIT
-                        ? "text-amber-500 border-amber-500/30 bg-amber-500/10"
+                        ? 'text-amber-500 border-amber-500/30 bg-amber-500/10'
                         : agent.status === ClientStatusEnum.OVER_LIMIT
-                        ? "text-red-500 border-red-500/30 bg-red-500/10"
-                        : agent.status === ClientStatusEnum.PAUSED
-                        ? "text-muted-foreground"
-                        : ""
+                          ? 'text-red-500 border-red-500/30 bg-red-500/10'
+                          : agent.status === ClientStatusEnum.PAUSED
+                            ? 'text-muted-foreground'
+                            : ''
                     }
                   >
                     {agent.status}
@@ -170,7 +153,7 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => {
-                          openModal("DELETE_AGENT", {
+                          openModal('DELETE_AGENT', {
                             agentId: agent.id,
                             agentName: agent.name,
                             onDeleted: onAction,

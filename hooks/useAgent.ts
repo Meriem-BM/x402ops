@@ -1,5 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ClientType, IClient } from "@/types/client";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { ClientType, IClient } from '@/types/client';
 
 interface CreateAgentParams {
   orgAddress: string;
@@ -22,10 +23,9 @@ interface UpdateAgentParams {
 
 // Keys for React Query
 export const agentKeys = {
-  all: ["agents"] as const,
-  list: (orgAddress?: string) =>
-    [...agentKeys.all, "list", orgAddress] as const,
-  detail: (id: string) => [...agentKeys.all, "detail", id] as const,
+  all: ['agents'] as const,
+  list: (orgAddress?: string) => [...agentKeys.all, 'list', orgAddress] as const,
+  detail: (id: string) => [...agentKeys.all, 'detail', id] as const,
 };
 
 /**
@@ -36,13 +36,13 @@ export const agentKeys = {
 async function fetchAgents(orgAddress?: string): Promise<IClient[]> {
   const searchParams = new URLSearchParams();
   if (orgAddress) {
-    searchParams.set("orgAddress", orgAddress);
+    searchParams.set('orgAddress', orgAddress);
   }
 
   const res = await fetch(`/api/clients?${searchParams.toString()}`);
   if (!res.ok) {
     const error = await res.json();
-    throw new Error(error.error || "Failed to fetch agents");
+    throw new Error(error.error || 'Failed to fetch agents');
   }
   const data = await res.json();
   return data.clients;
@@ -62,15 +62,15 @@ export function useFetchAgents(orgAddress?: string) {
  * @returns The created agent.
  */
 async function createAgent(params: CreateAgentParams): Promise<IClient> {
-  const res = await fetch("/api/clients", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  const res = await fetch('/api/clients', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params),
   });
 
   if (!res.ok) {
     const error = await res.json();
-    throw new Error(error.error || "Failed to create agent");
+    throw new Error(error.error || 'Failed to create agent');
   }
   const data = await res.json();
   return data.client;
@@ -95,14 +95,14 @@ export function useCreateAgent() {
 async function updateAgent(params: UpdateAgentParams): Promise<IClient> {
   const { id, ...body } = params;
   const res = await fetch(`/api/clients?id=${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
 
   if (!res.ok) {
     const error = await res.json();
-    throw new Error(error.error || "Failed to update agent");
+    throw new Error(error.error || 'Failed to update agent');
   }
   const data = await res.json();
   return data.client;
@@ -125,12 +125,12 @@ export function useUpdateAgent() {
  */
 async function deleteAgent(id: string): Promise<IClient> {
   const res = await fetch(`/api/clients?id=${id}`, {
-    method: "DELETE",
+    method: 'DELETE',
   });
 
   if (!res.ok) {
     const error = await res.json();
-    throw new Error(error.error || "Failed to delete agent");
+    throw new Error(error.error || 'Failed to delete agent');
   }
   const data = await res.json();
   return data.client;
