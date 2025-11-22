@@ -134,3 +134,21 @@ export async function PATCH(req: NextRequest) {
 
   return NextResponse.json({ client });
 }
+
+export async function DELETE(req: NextRequest) {
+  const idParam = req.nextUrl.searchParams.get("id");
+  if (!idParam) {
+    return NextResponse.json({ error: "Missing id" }, { status: 400 });
+  }
+
+  const deleted = await db
+    .delete(clients)
+    .where(eq(clients.id, idParam))
+    .returning();
+
+  if (!deleted || deleted.length === 0) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  return NextResponse.json({ client: deleted[0] });
+}
