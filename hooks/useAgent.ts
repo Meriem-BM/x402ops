@@ -57,6 +57,29 @@ export function useFetchAgents(orgAddress?: string) {
 }
 
 /**
+ * Fetch a single agent by ID.
+ * @param id - The ID of the agent to fetch.
+ * @returns The agent.
+ */
+async function fetchAgent(id: string): Promise<IClient> {
+  const res = await fetch(`/api/clients?id=${id}`);
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Failed to fetch agent');
+  }
+  const data = await res.json();
+  return data.client;
+}
+
+export function useFetchAgent(id: string) {
+  return useQuery({
+    queryKey: agentKeys.detail(id),
+    queryFn: () => fetchAgent(id),
+    enabled: !!id,
+  });
+}
+
+/**
  * Create a new agent.
  * @param params - The parameters for creating the agent.
  * @returns The created agent.
