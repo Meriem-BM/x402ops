@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useModal } from '@/contexts/modal-context';
-import { useAgentForm } from '@/hooks/use-agent-form';
+import { useAgentForm } from '@/hooks/useAgentForm';
 
 export function AgentFormModal() {
   const { isOpen, type, closeModal, props } = useModal();

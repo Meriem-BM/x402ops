@@ -65,7 +65,12 @@ export default function AgentDetailPage() {
   return (
     <DashboardShell>
       <div className="space-y-6">
-        <AgentHeader name={agentData.name} type={agentData.type} status={agentData.status} />
+        <AgentHeader
+          name={agentData.name}
+          type={agentData.type}
+          status={agentData.status}
+          wallet={agentData.wallet}
+        />
 
         <div className="grid gap-6 md:grid-cols-3">
           <WalletCard wallet={agentData.wallet} network={agentData.network} />

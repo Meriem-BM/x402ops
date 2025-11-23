@@ -1,5 +1,16 @@
 import crypto from 'crypto';
 
+import {
+  AgentKit,
+  CdpEvmWalletProvider,
+  cdpApiActionProvider,
+  cdpEvmWalletActionProvider,
+  erc20ActionProvider,
+  pythActionProvider,
+  walletActionProvider,
+  wethActionProvider,
+  x402ActionProvider,
+} from '@coinbase/agentkit';
 import { CdpClient } from '@coinbase/cdp-sdk';
 import { parseEther } from 'viem';
 
@@ -38,14 +49,42 @@ export class CdpService {
     }
 
     try {
-      const account = await this.getClient().evm.createAccount();
-      console.log(`Created EVM account: ${account.address}`);
+      // Initialize WalletProvider with a fresh wallet (no address parameter)
+      const walletProvider = await CdpEvmWalletProvider.configureWithWallet({
+        apiKeyId: process.env.CDP_API_KEY_ID,
+        apiKeySecret: process.env.CDP_API_KEY_SECRET,
+        walletSecret: process.env.CDP_WALLET_SECRET,
+        networkId: process.env.NETWORK_ID || 'base-sepolia',
+        rpcUrl: process.env.RPC_URL,
+      });
+
+      // Initialize AgentKit
+      // We create the agent to ensure the wallet is properly set up with agent capabilities
+      await AgentKit.from({
+        walletProvider,
+        actionProviders: [
+          wethActionProvider(),
+          pythActionProvider(),
+          walletActionProvider(),
+          erc20ActionProvider(),
+          cdpApiActionProvider(),
+          cdpEvmWalletActionProvider(),
+          x402ActionProvider(),
+        ],
+      });
+
+      const exportedWallet = await walletProvider.exportWallet();
+      const address = exportedWallet.address;
+      const walletId = address;
+
+      console.log(`Created Agent with wallet: ${address}`);
+
       return {
-        address: account.address,
-        walletId: account.address,
+        address: address,
+        walletId: walletId,
       };
     } catch (error) {
-      console.error('Error creating CDP wallet:', error);
+      console.error('Error creating agent and wallet:', error);
       throw error;
     }
   }

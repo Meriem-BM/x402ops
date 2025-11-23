@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { Copy, Pause, Play, Trash } from 'lucide-react';
+import { Copy, Pause, Play, Trash, Rocket } from 'lucide-react';
 import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
@@ -110,6 +110,12 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-end gap-2">
+                    <Link href={`/agent/${agent.cdpWalletAddress}`}>
+                      <Button variant="ghost" size="sm">
+                        <Rocket className="h-4 w-4 mr-2" />
+                        Launch
+                      </Button>
+                    </Link>
                     <Link href={`/agents/${agent.id}`}>
                       <Button variant="ghost" size="sm">
                         View
