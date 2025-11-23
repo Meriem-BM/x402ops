@@ -96,12 +96,18 @@ A unified interface to oversee your agent fleet:
     Create a `.env` file based on `.env.example` and add your credentials:
 
     ```env
-    DATABASE_URL=your_postgres_url
-    CDP_API_KEY_ID=your_cdp_key_id
-    CDP_API_KEY_SECRET=your_cdp_key_secret
-    CDP_WALLET_SECRET=your_cdp_wallet_secret
-    OPENAI_API_KEY=your_openai_key
-    NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
+    # Environment variables for the application
+    CDP_API_KEY_ID=
+    CDP_API_KEY_SECRET=
+    CDP_WALLET_SECRET=
+    CDP_BASE_URL=https://api.developer.coinbase.com
+    
+    # Database configuration
+    DATABASE_URL="postgresql://your_db_user:your_db_password@your_db_host/your_db_name?sslmode=require"
+    
+    # Privy configuration
+    NEXT_PUBLIC_PRIVY_APP_ID=
+    PRIVY_API_KEY=
     ```
 
 4.  Push the database schema:
