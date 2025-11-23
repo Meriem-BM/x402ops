@@ -1,4 +1,4 @@
-# x402Ops - Policy-Enabled AI Agent Orchestration
+# SpendMate (x402Ops) - Policy-Enabled AI Agent Orchestration
 
 SpendMate (x402Ops) is a modern control panel for managing, monitoring, and orchestrating autonomous AI agents with advanced on-chain capabilities. Built on the **Coinbase Developer Platform (CDP)** and **AgentKit**, it leverages **x402 Protocol** for policy enforcement, enabling secure and regulated agent behavior on-chain.
 
