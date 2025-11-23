@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { db } from '@/lib/db';
 import { clients } from '@/lib/db/schema';
+import { cdpService } from '@/services/cdp';
 import { ClientStatus, ClientType, VendorId } from '@/types';
 
 const id = () => crypto.randomUUID();
@@ -78,16 +79,30 @@ export async function POST(req: NextRequest) {
     })
     .returning();
 
-  // TODO: here you’d:
-  // - create CDP wallet for this agent
-  // - create & attach Policy Engine policy
-  // - db.update(clients).set({ cdpWalletId, cdpWalletAddress }).where(eq(clients.id, inserted.id))
+  // Create CDP wallet for this agent
+  const wallet = await cdpService.createWallet();
+
+  // Update the client row with the new wallet
+  const [updated] = await db
+    .update(clients)
+    .set({
+      cdpWalletId: wallet.walletId,
+      cdpWalletAddress: wallet.address,
+    })
+    .where(eq(clients.id, inserted.id))
+    .returning();
+
+  // Apply Policy Engine policy (mocked for now)
+  if (wallet.walletId && wallet.address) {
+    // Using dailyLimit as the policy configuration
+    await cdpService.applyPolicy(wallet.address, dailyLimit);
+  }
 
   const client = {
-    ...inserted,
-    dailyLimit: Number(inserted.dailyLimit),
-    spentToday: Number(inserted.spentToday),
-    allowedVendors: JSON.parse(inserted.allowedVendors) as VendorId[],
+    ...updated,
+    dailyLimit: Number(updated.dailyLimit),
+    spentToday: Number(updated.spentToday),
+    allowedVendors: JSON.parse(updated.allowedVendors) as VendorId[],
   };
 
   return NextResponse.json({ client }, { status: 201 });
