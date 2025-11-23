@@ -4,6 +4,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import { ModalRoot } from '@/components/modal-root';
 import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/toaster';
 import { ModalProvider } from '@/contexts/modal-context';
 import { OrgProvider } from '@/contexts/org-context';
 import PrivyProvider from '@/providers/privy-provider';
@@ -24,6 +25,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             >
               {children}
               <ModalRoot />
+              <Toaster />
             </ThemeProvider>
           </ModalProvider>
         </OrgProvider>

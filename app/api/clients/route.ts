@@ -16,6 +16,25 @@ function todayDateString() {
 export async function GET(req: NextRequest) {
   try {
     const orgAddress = req.nextUrl.searchParams.get('orgAddress') ?? undefined;
+    const id = req.nextUrl.searchParams.get('id') ?? undefined;
+
+    if (id) {
+      const rows = await db.select().from(clients).where(eq(clients.id, id)).execute();
+
+      if (rows.length === 0) {
+        return NextResponse.json({ error: 'Not found' }, { status: 404 });
+      }
+
+      const row = rows[0];
+      const client = {
+        ...row,
+        dailyLimit: Number(row.dailyLimit),
+        spentToday: Number(row.spentToday),
+        allowedVendors: JSON.parse(row.allowedVendors) as VendorId[],
+      };
+
+      return NextResponse.json({ client });
+    }
 
     const rows = await db
       .select()
@@ -30,6 +49,8 @@ export async function GET(req: NextRequest) {
     // Parse allowedVendors JSON
     const data = rows.map((row) => ({
       ...row,
+      dailyLimit: Number(row.dailyLimit),
+      spentToday: Number(row.spentToday),
       allowedVendors: JSON.parse(row.allowedVendors) as VendorId[],
     }));
 

@@ -12,9 +12,11 @@ import {
   x402ActionProvider,
 } from '@coinbase/agentkit';
 import { CdpClient } from '@coinbase/cdp-sdk';
-import { parseEther } from 'viem';
+import { formatUnits, parseEther } from 'viem';
 
 import { CHAIN_CONFIG } from '@/lib/constants';
+
+export type AssetId = 'eth' | 'usdc' | 'eurc' | 'cbbtc';
 
 export class CdpService {
   private client: CdpClient | null = null;
@@ -89,9 +91,9 @@ export class CdpService {
     }
   }
 
-  public async fundWallet(address: string) {
+  public async fundWallet(address: string, assetId?: AssetId) {
     if (!this.client) {
-      console.log(`[Mock] Funding wallet ${address}`);
+      console.log(`[Mock] Funding wallet ${address} with ${assetId || CHAIN_CONFIG.ASSET_ID}`);
       return { transactionHash: '0xMockTxHash' };
     }
 
@@ -99,7 +101,7 @@ export class CdpService {
       const faucetResponse = await this.getClient().evm.requestFaucet({
         address,
         network: CHAIN_CONFIG.NETWORK_ID,
-        token: CHAIN_CONFIG.ASSET_ID,
+        token: assetId || CHAIN_CONFIG.ASSET_ID,
       });
       console.log(
         `Requested funds: https://sepolia.basescan.org/tx/${faucetResponse.transactionHash}`
@@ -158,7 +160,10 @@ export class CdpService {
 
   public async getBalance(address: string) {
     if (!this.client) {
-      return '0.00'; // Mock balance
+      return [
+        { assetId: 'eth', amount: '0.00' },
+        { assetId: 'usdc', amount: '0.00' },
+      ];
     }
 
     try {
@@ -166,8 +171,37 @@ export class CdpService {
         address: address as `0x${string}`,
         network: CHAIN_CONFIG.NETWORK_ID,
       });
-      // Assuming first balance is the native token
-      return balance.balances[0]?.amount || '0';
+
+      // Transform and format balances to avoid BigInt serialization issues
+      return balance.balances.map((b) => {
+        // Check if 'amount' is an object with 'amount' and 'decimals' properties
+        // The types from the SDK might be a bit different than what we see in the console log if we are using an older version or if the types are not fully accurate.
+        // Based on the console log: amount: { amount: 3000000n, decimals: 6 }
+        // It seems b.amount is the object.
+        const amountVal = b.amount;
+        let formattedAmount = '0';
+
+        // Handle the BigInt amount safely
+        // We use 'any' cast here because the actual runtime shape matches the console log
+        // but the SDK types might not fully reflect this nested structure if it's from a recent update
+        const unsafeAmount = amountVal as unknown as { amount: bigint; decimals: number };
+
+        if (unsafeAmount && typeof unsafeAmount.amount === 'bigint') {
+          formattedAmount = formatUnits(unsafeAmount.amount, unsafeAmount.decimals || 18);
+        } else if (typeof amountVal === 'string') {
+          // Fallback if it's just a string
+          formattedAmount = amountVal;
+        } else if (typeof amountVal === 'object' && amountVal !== null) {
+          // Case where amountVal is numeric/string but wrapped or direct value
+          // This handles cases if types are slightly different than expected
+          formattedAmount = String(amountVal);
+        }
+
+        return {
+          assetId: b.token?.symbol?.toLowerCase() || '',
+          amount: formattedAmount,
+        };
+      });
     } catch (error) {
       console.error('Error getting balance:', error);
       throw error;

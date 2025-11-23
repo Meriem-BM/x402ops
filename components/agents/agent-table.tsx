@@ -11,6 +11,7 @@ import { Card } from '@/components/ui/card';
 import { useModal } from '@/contexts/modal-context';
 import { useUpdateAgent } from '@/hooks/useAgent';
 import { ClientStatusEnum, IClient } from '@/types/client';
+import { shortenAddress } from '@/utils/address';
 
 interface AgentTableProps {
   agents: IClient[] | [];
@@ -56,7 +57,7 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
                     <code className="text-xs font-mono text-muted-foreground">
-                      {agent.cdpWalletAddress}
+                      {shortenAddress(agent.cdpWalletAddress || '')}
                     </code>
                     <Button
                       variant="ghost"
@@ -112,13 +113,8 @@ export function AgentTable({ agents, onAction }: AgentTableProps) {
                   <div className="flex items-center justify-end gap-2">
                     <Link href={`/agent/${agent.cdpWalletAddress}`}>
                       <Button variant="ghost" size="sm">
-                        <Rocket className="h-4 w-4 mr-2" />
+                        <Rocket className="h-4 w-4 mr-1" />
                         Launch
-                      </Button>
-                    </Link>
-                    <Link href={`/agents/${agent.id}`}>
-                      <Button variant="ghost" size="sm">
-                        View
                       </Button>
                     </Link>
                     <div className="flex items-center gap-2">
